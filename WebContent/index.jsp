@@ -54,8 +54,7 @@
 					<span class="sr-only">Toggle navigation</span> Menu <i
 						class="fa fa-bars"></i>
 				</button>
-				<a class="navbar-brand page-scroll" href="#page-top">Time Table
-					Generator</a>
+				<a class="navbar-brand page-scroll" href="#page-top"><i class="fa fa-calendar-check-o text-primary"></i> Automated Timetable Scheduler</a>
 			</div>
 
 			<!-- Collect the nav links, forms, and other content for toggling -->
@@ -63,10 +62,12 @@
 				id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav navbar-right">
 					<li class="hidden"><a href="#page-top"></a></li>
-					<li><a class="page-scroll" href="dashboard.jsp" style="color: #0284c7; font-weight: bold;"><i class="fa fa-th-large"></i> Dashboard</a></li>
+					<li><a href="admin-login.jsp" style="color: #93c5fd; font-weight: 600;"><i class="fa fa-cogs"></i> Admin</a></li>
+					<li><a href="faculty-login.jsp" style="color: #bae6fd; font-weight: 600;"><i class="fa fa-user-circle"></i> Faculty</a></li>
+					<li><a href="student-login.jsp" style="color: #a7f3d0; font-weight: 600;"><i class="fa fa-graduation-cap"></i> Student</a></li>
+					<li><a href="how-to-use.jsp"><i class="fa fa-book"></i> Guide</a></li>
 					<li><a class="page-scroll" href="#about">About</a></li>
 					<li><a class="page-scroll" href="#services">Features</a></li>
-					<li><a class="page-scroll" href="#contact">Contact</a></li>
 				</ul>
 			</div>
 			<!-- /.navbar-collapse -->
@@ -76,11 +77,27 @@
 	<!-- Header -->
 	<header>
 		<div class="container">
-			<div class="intro-text">
-				<div class="intro-lead-in"></div>
-				<div class="intro-heading"></div>
-				<a href="form" class="page-scroll btn btn-xl">Get Started</a>
-				<a href="dashboard.jsp" class="btn btn-xl" style="background:#0284c7; border-color:#0284c7; margin-left:14px;"><i class="fa fa-th-large"></i> ERP Dashboard</a>
+			<div class="intro-text" style="padding-top: 150px; padding-bottom: 120px;">
+				<div class="intro-lead-in" style="font-size: 26px; text-transform: uppercase; letter-spacing: 2px; color: #93c5fd; margin-bottom: 15px;">
+					Intelligent Academic Scheduling System
+				</div>
+				<div class="intro-heading" style="font-size: 48px; font-weight: 800; text-transform: none; margin-bottom: 25px;">
+					Automated Timetable Scheduler
+				</div>
+				<p style="max-width: 720px; margin: 0 auto 35px; font-size: 16px; color: #e2e8f0; text-shadow: 0 2px 4px rgba(0,0,0,0.6);">
+					Optimized genetic algorithm scheduling with zero clashes, balanced faculty workload, dedicated lab reservations, and role-based access for Administrators, Faculty, and Students.
+				</p>
+				<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; margin-top: 20px;">
+					<a href="admin-login.jsp" class="btn btn-xl" style="background: #1e3a8a; border-color: #2563eb; color: #fff; padding: 16px 28px; font-size: 15px; font-weight: 700; border-radius: 8px; box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
+						<i class="fa fa-cogs"></i> Login as Admin
+					</a>
+					<a href="faculty-login.jsp" class="btn btn-xl" style="background: #0284c7; border-color: #0ea5e9; color: #fff; padding: 16px 28px; font-size: 15px; font-weight: 700; border-radius: 8px; box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
+						<i class="fa fa-user-circle"></i> Login as Faculty
+					</a>
+					<a href="student-login.jsp" class="btn btn-xl" style="background: #059669; border-color: #10b981; color: #fff; padding: 16px 28px; font-size: 15px; font-weight: 700; border-radius: 8px; box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
+						<i class="fa fa-graduation-cap"></i> Login as Student
+					</a>
+				</div>
 			</div>
 		</div>
 	</header>

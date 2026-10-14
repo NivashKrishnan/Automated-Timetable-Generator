@@ -19,6 +19,9 @@ Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
 			<result name="error">login.jsp</result>
 		</action>
 		<action name="main" class="front.User" method="login">
+			<result name="admin-success">dashboard.jsp</result>
+			<result name="faculty-success">faculty-dashboard.jsp</result>
+			<result name="student-success">student-dashboard.jsp</result>
 			<result name="success">dashboard.jsp</result>
 			<result name="error">login-error.jsp</result>
 		</action>

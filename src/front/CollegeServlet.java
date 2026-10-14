@@ -1,6 +1,7 @@
 package front;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +21,12 @@ public class CollegeServlet extends HttpServlet {
                 String name = request.getParameter("dept_name");
                 String hod = request.getParameter("hod_name");
                 CollegeDao.addDepartment(code, name, hod);
-                response.sendRedirect("departments.jsp?status=success");
+                String redirect = request.getParameter("redirect");
+                if (redirect != null && !redirect.trim().isEmpty()) {
+                    response.sendRedirect(redirect);
+                } else {
+                    response.sendRedirect("departments.jsp?status=success");
+                }
                 return;
             } else if ("deleteDept".equals(action)) {
                 int id = Integer.parseInt(request.getParameter("id"));
@@ -33,10 +39,18 @@ public class CollegeServlet extends HttpServlet {
                 String dept = request.getParameter("dept_name");
                 String email = request.getParameter("email");
                 String subjects = request.getParameter("assigned_subjects");
-                int maxHours = Integer.parseInt(request.getParameter("max_hours"));
+                int maxHours = 18;
+                try { maxHours = Integer.parseInt(request.getParameter("max_hours")); } catch (Exception ignored) {}
                 String avail = request.getParameter("availability");
+                if (avail == null || avail.isEmpty()) avail = "Full-Time";
+                if (fid == null || fid.isEmpty()) fid = "FAC-" + System.currentTimeMillis() % 10000;
                 CollegeDao.addFaculty(fid, name, dept, email, subjects, maxHours, avail);
-                response.sendRedirect("faculty.jsp?status=success");
+                String redirect = request.getParameter("redirect");
+                if (redirect != null && !redirect.trim().isEmpty()) {
+                    response.sendRedirect(redirect);
+                } else {
+                    response.sendRedirect("faculty.jsp?status=success");
+                }
                 return;
             } else if ("deleteFaculty".equals(action)) {
                 int id = Integer.parseInt(request.getParameter("id"));
@@ -47,12 +61,20 @@ public class CollegeServlet extends HttpServlet {
                 String code = request.getParameter("code");
                 String name = request.getParameter("name");
                 String dept = request.getParameter("dept_name");
-                int sem = Integer.parseInt(request.getParameter("semester"));
-                int hours = Integer.parseInt(request.getParameter("weekly_hours"));
+                int sem = 1;
+                try { sem = Integer.parseInt(request.getParameter("semester")); } catch (Exception ignored) {}
+                int hours = 4;
+                try { hours = Integer.parseInt(request.getParameter("weekly_hours")); } catch (Exception ignored) {}
                 String type = request.getParameter("type");
+                if (type == null || type.isEmpty()) type = "Theory";
                 String faculty = request.getParameter("faculty_name");
                 CollegeDao.addSubject(code, name, dept, sem, hours, type, faculty);
-                response.sendRedirect("subjects.jsp?status=success");
+                String redirect = request.getParameter("redirect");
+                if (redirect != null && !redirect.trim().isEmpty()) {
+                    response.sendRedirect(redirect);
+                } else {
+                    response.sendRedirect("subjects.jsp?status=success");
+                }
                 return;
             } else if ("deleteSubject".equals(action)) {
                 int id = Integer.parseInt(request.getParameter("id"));
@@ -62,13 +84,20 @@ public class CollegeServlet extends HttpServlet {
             } else if ("addClass".equals(action)) {
                 String dept = request.getParameter("dept_name");
                 String year = request.getParameter("academic_year");
-                int sem = Integer.parseInt(request.getParameter("semester"));
+                int sem = 1;
+                try { sem = Integer.parseInt(request.getParameter("semester")); } catch (Exception ignored) {}
                 String yearOfStudy = request.getParameter("year_of_study");
                 String sec = request.getParameter("section_name");
-                int count = Integer.parseInt(request.getParameter("student_count"));
+                int count = 60;
+                try { count = Integer.parseInt(request.getParameter("student_count")); } catch (Exception ignored) {}
                 String adviser = request.getParameter("class_adviser");
                 CollegeDao.addClass(dept, year, sem, yearOfStudy, sec, count, adviser);
-                response.sendRedirect("classes.jsp?status=success");
+                String redirect = request.getParameter("redirect");
+                if (redirect != null && !redirect.trim().isEmpty()) {
+                    response.sendRedirect(redirect);
+                } else {
+                    response.sendRedirect("classes.jsp?status=success");
+                }
                 return;
             } else if ("deleteClass".equals(action)) {
                 int id = Integer.parseInt(request.getParameter("id"));
@@ -78,16 +107,42 @@ public class CollegeServlet extends HttpServlet {
             } else if ("addClassroom".equals(action)) {
                 String num = request.getParameter("room_number");
                 String type = request.getParameter("room_type");
-                int cap = Integer.parseInt(request.getParameter("capacity"));
+                int cap = 60;
+                try { cap = Integer.parseInt(request.getParameter("capacity")); } catch (Exception ignored) {}
                 String avail = request.getParameter("availability");
+                if (avail == null || avail.isEmpty()) avail = "Available";
                 String lab = request.getParameter("lab_assignment");
                 CollegeDao.addClassroom(num, type, cap, avail, lab);
-                response.sendRedirect("classrooms.jsp?status=success");
+                String redirect = request.getParameter("redirect");
+                if (redirect != null && !redirect.trim().isEmpty()) {
+                    response.sendRedirect(redirect);
+                } else {
+                    response.sendRedirect("classrooms.jsp?status=success");
+                }
                 return;
             } else if ("deleteClassroom".equals(action)) {
                 int id = Integer.parseInt(request.getParameter("id"));
                 CollegeDao.deleteClassroom(id);
                 response.sendRedirect("classrooms.jsp?status=deleted");
+                return;
+            } else if ("updateSlot".equals(action)) {
+                int slotId = Integer.parseInt(request.getParameter("slot_id"));
+                String subCode = request.getParameter("subject_code");
+                String subName = request.getParameter("subject_name");
+                String facName = request.getParameter("faculty_name");
+                String roomNo = request.getParameter("room_no");
+                int isLab = 0;
+                try { isLab = Integer.parseInt(request.getParameter("is_lab")); } catch (Exception ignored) {}
+                boolean ok = CollegeDao.updateSlot(slotId, subCode, subName, facName, roomNo, isLab);
+                response.setContentType("application/json");
+                PrintWriter out = response.getWriter();
+                out.print("{\"success\":" + ok + "}");
+                out.flush();
+                return;
+            } else if ("deleteUser".equals(action)) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                UserDao.deleteUser(id);
+                response.sendRedirect("reports.jsp?status=user_deleted");
                 return;
             }
         } catch (Exception e) {
