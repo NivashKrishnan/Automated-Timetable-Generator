@@ -37,13 +37,19 @@ public class CollegeServlet extends HttpServlet {
                 String fid = request.getParameter("faculty_id");
                 String name = request.getParameter("name");
                 String dept = request.getParameter("dept_name");
+                String customDept = request.getParameter("custom_dept_name");
+                if (customDept != null && !customDept.trim().isEmpty()) {
+                    dept = customDept.trim();
+                    String code = dept.length() >= 3 ? dept.substring(0, 3).toUpperCase() : dept.toUpperCase();
+                    CollegeDao.addDepartment(code, dept, "HOD (" + dept + ")");
+                }
                 String email = request.getParameter("email");
                 String subjects = request.getParameter("assigned_subjects");
                 int maxHours = 18;
                 try { maxHours = Integer.parseInt(request.getParameter("max_hours")); } catch (Exception ignored) {}
                 String avail = request.getParameter("availability");
                 if (avail == null || avail.isEmpty()) avail = "Full-Time";
-                if (fid == null || fid.isEmpty()) fid = "FAC-" + System.currentTimeMillis() % 10000;
+                if (fid == null || fid.isEmpty()) fid = "FAC-" + (System.currentTimeMillis() % 10000);
                 CollegeDao.addFaculty(fid, name, dept, email, subjects, maxHours, avail);
                 String redirect = request.getParameter("redirect");
                 if (redirect != null && !redirect.trim().isEmpty()) {
@@ -61,6 +67,12 @@ public class CollegeServlet extends HttpServlet {
                 String code = request.getParameter("code");
                 String name = request.getParameter("name");
                 String dept = request.getParameter("dept_name");
+                String customDept = request.getParameter("custom_dept_name");
+                if (customDept != null && !customDept.trim().isEmpty()) {
+                    dept = customDept.trim();
+                    String codeD = dept.length() >= 3 ? dept.substring(0, 3).toUpperCase() : dept.toUpperCase();
+                    CollegeDao.addDepartment(codeD, dept, "HOD (" + dept + ")");
+                }
                 int sem = 1;
                 try { sem = Integer.parseInt(request.getParameter("semester")); } catch (Exception ignored) {}
                 int hours = 4;
@@ -68,6 +80,11 @@ public class CollegeServlet extends HttpServlet {
                 String type = request.getParameter("type");
                 if (type == null || type.isEmpty()) type = "Theory";
                 String faculty = request.getParameter("faculty_name");
+                String customFaculty = request.getParameter("custom_faculty_name");
+                if (customFaculty != null && !customFaculty.trim().isEmpty()) {
+                    faculty = customFaculty.trim();
+                    CollegeDao.addFaculty("FAC-" + (System.currentTimeMillis() % 10000), faculty, dept, faculty.toLowerCase().replaceAll("\\s+", "") + "@college.edu", code, 18, "Full-Time");
+                }
                 CollegeDao.addSubject(code, name, dept, sem, hours, type, faculty);
                 String redirect = request.getParameter("redirect");
                 if (redirect != null && !redirect.trim().isEmpty()) {
@@ -83,11 +100,21 @@ public class CollegeServlet extends HttpServlet {
                 return;
             } else if ("addClass".equals(action)) {
                 String dept = request.getParameter("dept_name");
+                String customDept = request.getParameter("custom_dept_name");
+                if (customDept != null && !customDept.trim().isEmpty()) {
+                    dept = customDept.trim();
+                    String codeD = dept.length() >= 3 ? dept.substring(0, 3).toUpperCase() : dept.toUpperCase();
+                    CollegeDao.addDepartment(codeD, dept, "HOD (" + dept + ")");
+                }
                 String year = request.getParameter("academic_year");
                 int sem = 1;
                 try { sem = Integer.parseInt(request.getParameter("semester")); } catch (Exception ignored) {}
                 String yearOfStudy = request.getParameter("year_of_study");
                 String sec = request.getParameter("section_name");
+                String customSec = request.getParameter("custom_section_name");
+                if (customSec != null && !customSec.trim().isEmpty()) {
+                    sec = customSec.trim();
+                }
                 int count = 60;
                 try { count = Integer.parseInt(request.getParameter("student_count")); } catch (Exception ignored) {}
                 String adviser = request.getParameter("class_adviser");

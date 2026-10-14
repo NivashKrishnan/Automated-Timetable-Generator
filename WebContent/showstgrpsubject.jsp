@@ -1,14 +1,23 @@
+<%@ page import="front.CollegeDao, java.util.*" %>
 <%
 	String si = (String)request.getParameter("val");
 	if(si != null && !si.trim().isEmpty()){
 		try {
 			int i = Integer.parseInt(si);
 			if(i > 0) {
+				List<Map<String, String>> subList = CollegeDao.getSubjectsList();
 %>
 			<div style="background:#fff; border-radius:8px; padding:12px 14px; border:1px dashed #cbd5e1; margin-top:8px; margin-bottom:12px;">
 				<div style="font-size:11.5px; font-weight:700; color:#64748b; text-transform:uppercase; margin-bottom:8px;">
 					Subject Curriculum Load Allocation
 				</div>
+
+				<datalist id="registeredSubjectList">
+					<% if(subList != null) { for(Map<String, String> s : subList) { %>
+						<option value="<%= s.get("code") %>"><%= s.get("name") %></option>
+					<% }} %>
+				</datalist>
+
 <%
 				for(int j = 0; j < i; j++){
 %>
@@ -16,7 +25,7 @@
 					<div class="col-xs-12 col-sm-7">
 						<div class="input-group">
 							<span class="input-group-addon" style="font-size:11px; background:#f8fafc;">Subject <%= (j+1) %></span>
-							<input type="text" class="form-control" name="stgrpsubject" placeholder="e.g. AP-1101" required>
+							<input type="text" class="form-control" name="stgrpsubject" list="registeredSubjectList" placeholder="Select or type code (e.g. AP-1101)" required>
 						</div>
 					</div>
 					<div class="col-xs-12 col-sm-5">

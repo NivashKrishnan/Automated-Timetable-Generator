@@ -1,6 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.*, front.CollegeDao" %>
 <%
+    String currentRole = (String) session.getAttribute("role");
+    String loginStatus = (String) session.getAttribute("login");
+    if (loginStatus == null || !"true".equals(loginStatus)) {
+        response.sendRedirect("admin-login.jsp");
+        return;
+    }
+    if (!"ADMIN".equalsIgnoreCase(currentRole)) {
+        response.sendRedirect("admin-login.jsp?error=unauthorized");
+        return;
+    }
+
     request.setAttribute("activePage", "classes");
     request.setAttribute("pageHeading", "Class & Section Management");
     request.setAttribute("breadcrumb", "Academic Management / Student Batches");
@@ -16,7 +27,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Classes & Sections | CampusSchedule ERP</title>
+    <title>Classes & Sections | Automated Timetable Scheduler</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet">

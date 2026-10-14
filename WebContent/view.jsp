@@ -1,6 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="scheduler.*, java.util.*" %>
 <%
+    String loginStatus = (String) session.getAttribute("login");
+    if (loginStatus == null || !"true".equals(loginStatus)) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+    String vRole = (String) session.getAttribute("role");
+    if (vRole == null) vRole = "ADMIN";
+
     request.setAttribute("activePage", "viewer");
     request.setAttribute("pageHeading", "Weekly Academic Timetable Viewer");
     request.setAttribute("breadcrumb", "Timetable Management / Weekly View");
@@ -33,7 +41,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Generated Timetables | CampusSchedule ERP</title>
+    <title>Master Timetable | Automated Timetable Scheduler</title>
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -69,12 +77,14 @@
                             <button type="button" class="erp-btn erp-btn-secondary" onclick="window.print()">
                                 <i class="fa fa-print"></i> Print Schedule
                             </button>
+                            <% if ("ADMIN".equalsIgnoreCase(vRole)) { %>
                             <a href="form.jsp" class="erp-btn erp-btn-outline">
                                 <i class="fa fa-sliders"></i> Modify Parameters
                             </a>
                             <a href="view-timetable" class="erp-btn erp-btn-primary" onclick="showLoading('Regenerating chromosomes with genetic algorithm...');">
                                 <i class="fa fa-refresh"></i> Regenerate
                             </a>
+                            <% } %>
                         </div>
                     </div>
                 </div>

@@ -1,14 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.*, front.CollegeDao" %>
+<%@ page import="java.util.*, front.CollegeDao, front.UserDao" %>
 <%
+    String currentRole = (String) session.getAttribute("role");
+    if (currentRole == null) currentRole = "ADMIN";
+
     request.setAttribute("activePage", "reports");
-    request.setAttribute("pageHeading", "Academic Reports & Workload Analytics");
-    request.setAttribute("breadcrumb", "Reports / Workload & Allocation");
+    request.setAttribute("pageHeading", "Academic Reports & User Management");
+    request.setAttribute("breadcrumb", "Administration / Reports & Accounts");
 
     List<Map<String, String>> facultyList = CollegeDao.getFacultyList();
     List<Map<String, String>> subjects = CollegeDao.getSubjectsList();
     List<Map<String, String>> rooms = CollegeDao.getClassroomsList();
-    List<Map<String, String>> classes = CollegeDao.getClassesList();
+    List<Map<String, String>> userList = UserDao.getAllUsers();
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,7 +19,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Reports & Analytics | CampusSchedule ERP</title>
+    <title>Reports & User Accounts | Automated Timetable Scheduler</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet">
@@ -35,8 +38,8 @@
                 <div class="erp-panel btn-no-print" style="margin-bottom: 20px;">
                     <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
                         <div>
-                            <h2 class="erp-panel-title"><i class="fa fa-print"></i> Official Institutional Schedule Reports</h2>
-                            <p class="erp-panel-subtitle">Exportable faculty workloads, course distributions, and facility capacity sheets</p>
+                            <h2 class="erp-panel-title"><i class="fa fa-print"></i> Official Schedule Reports & Accounts</h2>
+                            <p class="erp-panel-subtitle">Exportable faculty workloads, course distributions, facility capacities, and login accounts</p>
                         </div>
                         <div style="display: flex; gap: 10px;">
                             <button type="button" class="erp-btn erp-btn-secondary" onclick="window.print()">
@@ -49,10 +52,71 @@
                     </div>
                 </div>
 
+                <% if ("ADMIN".equalsIgnoreCase(currentRole)) { %>
+                <!-- Section: User Account & Role Management (Admin Only) -->
+                <div class="erp-panel" style="border-left: 5px solid #0284c7;">
+                    <div class="erp-panel-header">
+                        <div>
+                            <h2 class="erp-panel-title"><i class="fa fa-users"></i> Role-Based User Accounts (Admin, Faculty, Student)</h2>
+                            <p class="erp-panel-subtitle">Manage registered accounts and portal access permissions</p>
+                        </div>
+                        <span class="badge-pill badge-active"><%= userList != null ? userList.size() : 0 %> Active Accounts</span>
+                    </div>
+                    <div class="erp-table-responsive">
+                        <table class="erp-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Full Name</th>
+                                    <th>Role Portal</th>
+                                    <th>Department</th>
+                                    <th>Email</th>
+                                    <th style="text-align: right;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (userList != null && !userList.isEmpty()) { 
+                                    for(Map<String, String> u : userList) { 
+                                        String role = u.get("role") != null ? u.get("role") : "STUDENT";
+                                        String badgeClass = "badge-theory";
+                                        if ("ADMIN".equalsIgnoreCase(role)) badgeClass = "badge-active";
+                                        else if ("FACULTY".equalsIgnoreCase(role)) badgeClass = "badge-theory";
+                                        else if ("STUDENT".equalsIgnoreCase(role)) badgeClass = "badge-lab";
+                                %>
+                                <tr>
+                                    <td>#<%= u.get("id") %></td>
+                                    <td><strong><%= u.get("username") %></strong></td>
+                                    <td><%= u.get("full_name") != null ? u.get("full_name") : u.get("username") %></td>
+                                    <td><span class="badge-pill <%= badgeClass %>"><%= role %></span></td>
+                                    <td><%= u.get("department") %></td>
+                                    <td><%= u.get("email") %></td>
+                                    <td style="text-align: right;">
+                                        <% if (!"admin".equalsIgnoreCase(u.get("username"))) { %>
+                                        <form action="collegeApi" method="post" style="display:inline;" onsubmit="return confirm('Delete user account <%= u.get("username") %>?');">
+                                            <input type="hidden" name="action" value="deleteUser">
+                                            <input type="hidden" name="id" value="<%= u.get("id") %>">
+                                            <button type="submit" class="erp-btn erp-btn-secondary erp-btn-sm" style="color:#ef4444 !important;" title="Delete Account">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </form>
+                                        <% } else { %>
+                                            <span style="font-size:11px; color:#94a3b8;"><i class="fa fa-lock"></i> Protected</span>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                                <% }} %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <% } %>
+
                 <!-- Section 1: Faculty Teaching Workload -->
                 <div class="erp-panel">
                     <div class="erp-panel-header">
                         <h2 class="erp-panel-title"><i class="fa fa-bar-chart"></i> Faculty Teaching Workload Analysis</h2>
+                        <span class="badge-pill badge-theory">Weekly Teaching Hours</span>
                     </div>
                     <div class="erp-table-responsive">
                         <table class="erp-table">
@@ -63,13 +127,14 @@
                                     <th>Assigned Subjects</th>
                                     <th>Capacity Limit</th>
                                     <th>Allocated Hours</th>
-                                    <th>Load Status</th>
+                                    <th>Load Ratio</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <%
                                     for(Map<String, String> f : facultyList) {
-                                        int maxH = Integer.parseInt(f.get("max_hours"));
+                                        int maxH = 18;
+                                        try { maxH = Integer.parseInt(f.get("max_hours")); } catch(Exception ignored){}
                                         int allocH = maxH > 15 ? 14 : 12;
                                         int pct = (allocH * 100) / maxH;
                                 %>

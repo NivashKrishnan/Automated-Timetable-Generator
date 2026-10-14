@@ -2,7 +2,7 @@
 <%@ page import="front.CollegeDao, java.util.*" %>
 <%
     List<Map<String, String>> depts = CollegeDao.getDepartments();
-    List<Map<String, String>> classes = CollegeDao.getClasses();
+    List<Map<String, String>> classes = CollegeDao.getClassesList();
 %>
 <!DOCTYPE html>
 <html lang="en">

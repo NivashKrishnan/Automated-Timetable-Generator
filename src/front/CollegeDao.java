@@ -284,6 +284,8 @@ public class CollegeDao {
                     row.put("section_name", rs.getString("section_name"));
                     row.put("student_count", String.valueOf(rs.getInt("student_count")));
                     row.put("class_adviser", rs.getString("class_adviser"));
+                    row.put("name", rs.getString("section_name"));
+                    row.put("department", rs.getString("dept_name"));
                     list.add(row);
                 }
                 rs.close();
@@ -295,6 +297,10 @@ public class CollegeDao {
             try { if (con != null) con.close(); } catch (Exception ignored) {}
         }
         return list;
+    }
+
+    public static List<Map<String, String>> getClasses() {
+        return getClassesList();
     }
 
     public static boolean addClass(String deptName, String academicYear, int semester, String yearOfStudy, String sectionName, int studentCount, String adviser) {
@@ -571,6 +577,52 @@ public class CollegeDao {
             }
         } catch (Exception e) {
             System.out.println("Error in getTimetableSlots: " + e);
+        } finally {
+            try { if (con != null) con.close(); } catch (Exception ignored) {}
+        }
+        return list;
+    }
+
+    public static List<Map<String, String>> getTimetableSlots(String sectionName) {
+        List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+        Connection con = null;
+        try {
+            con = UserDao.getConnection();
+            if (con != null) {
+                PreparedStatement ps = con.prepareStatement(
+                    "SELECT s.id, s.timetable_id, s.day_index, s.day_name, s.period_index, s.time_slot, s.subject_code, " +
+                    "s.subject_name, s.faculty_name, s.room_no, s.is_lab, t.section_name as class_name, s.faculty_name as teacher_name, " +
+                    "CONCAT('Period ', s.period_index) as hour_name " +
+                    "FROM timetable_slots s " +
+                    "JOIN timetables t ON s.timetable_id = t.id " +
+                    "WHERE t.section_name LIKE ? " +
+                    "ORDER BY s.day_index ASC, s.period_index ASC LIMIT 35"
+                );
+                ps.setString(1, "%" + (sectionName != null ? sectionName.trim() : "") + "%");
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    Map<String, String> row = new HashMap<String, String>();
+                    row.put("id", String.valueOf(rs.getInt("id")));
+                    row.put("timetable_id", String.valueOf(rs.getInt("timetable_id")));
+                    row.put("day_index", String.valueOf(rs.getInt("day_index")));
+                    row.put("day_name", rs.getString("day_name"));
+                    row.put("period_index", String.valueOf(rs.getInt("period_index")));
+                    row.put("time_slot", rs.getString("time_slot"));
+                    row.put("hour_name", rs.getString("hour_name"));
+                    row.put("class_name", rs.getString("class_name"));
+                    row.put("subject_code", rs.getString("subject_code"));
+                    row.put("subject_name", rs.getString("subject_name"));
+                    row.put("teacher_name", rs.getString("teacher_name"));
+                    row.put("faculty_name", rs.getString("faculty_name"));
+                    row.put("room_no", rs.getString("room_no"));
+                    row.put("is_lab", String.valueOf(rs.getInt("is_lab")));
+                    list.add(row);
+                }
+                rs.close();
+                ps.close();
+            }
+        } catch (Exception e) {
+            System.out.println("Error in getTimetableSlots(sectionName): " + e);
         } finally {
             try { if (con != null) con.close(); } catch (Exception ignored) {}
         }

@@ -12,17 +12,20 @@ Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
 		</action>
 		<action name="dashboard" class="front.User" method="loginCheck">
 			<result name="success">dashboard.jsp</result>
-			<result name="error">login.jsp</result>
+			<result name="error" type="redirect">admin-login.jsp</result>
 		</action>
 		<action name="form" class="front.User" method="loginCheck">
 			<result name="success">form.jsp</result>
-			<result name="error">login.jsp</result>
+			<result name="error" type="redirect">admin-login.jsp</result>
 		</action>
 		<action name="main" class="front.User" method="login">
-			<result name="admin-success">dashboard.jsp</result>
-			<result name="faculty-success">faculty-dashboard.jsp</result>
-			<result name="student-success">student-dashboard.jsp</result>
-			<result name="success">dashboard.jsp</result>
+			<result name="admin-success" type="redirect">dashboard.jsp</result>
+			<result name="faculty-success" type="redirect">faculty-dashboard.jsp</result>
+			<result name="student-success" type="redirect">student-dashboard.jsp</result>
+			<result name="admin" type="redirect">dashboard.jsp</result>
+			<result name="faculty" type="redirect">faculty-dashboard.jsp</result>
+			<result name="student" type="redirect">student-dashboard.jsp</result>
+			<result name="success" type="redirect">dashboard.jsp</result>
 			<result name="error">login-error.jsp</result>
 		</action>
 		<action name="register" class="front.User" method="register">
@@ -38,7 +41,7 @@ Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
 			<result name="success">view.jsp</result>
 		</action>
 		<action name="logout" class="front.User" method="logout">
-			<result>login.jsp</result>
+			<result type="redirect">login.jsp</result>
 		</action>
 	</package>
 </struts>

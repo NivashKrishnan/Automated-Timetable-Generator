@@ -1,14 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.*, front.CollegeDao" %>
 <%
-    // Local preview helper for automated screenshot capture
-    if ("local_preview".equals(request.getParameter("preview"))) {
-        session.setAttribute("login", "true");
-        session.setAttribute("role", "ADMIN");
-        session.setAttribute("username", "admin");
-        session.setAttribute("fullName", "System Administrator");
-        session.setAttribute("department", "CSE");
-    }
     // Server-side Role-Based Access Control
     String currentRole = (String) session.getAttribute("role");
     String loginStatus = (String) session.getAttribute("login");
